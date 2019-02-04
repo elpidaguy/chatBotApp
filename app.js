@@ -247,6 +247,10 @@ bidApp.config(function($routeProvider) {
         templateUrl : 'login.html',
         controller : 'homeController'
     })
+    .when('/register', {
+      templateUrl : 'views/register.html',
+      controller : 'homeController'
+  })
     .when('/home', {
         templateUrl : 'views/home.html',
         controller : 'homeController'
@@ -255,45 +259,78 @@ bidApp.config(function($routeProvider) {
         templateUrl : 'views/notices.html',
         controller : 'homeController'
     })
-    .when('/categories', {
-      templateUrl : 'views/admin/categories.html',
-      controller : 'homeController'
-    })
-    .when('/listUsers', {
-      templateUrl : 'views/admin/listUsers.html',
-      controller : 'homeController'
-    })
-    .when('/listProblems', {
-      templateUrl : 'views/admin/listProblems.html',
+    .when('/profile', {
+      templateUrl : 'views/profile.html',
       controller : 'homeController'
     });
 });
 
-bidApp.controller('homeController', function($scope,$http,$route,$templateCache,$window,$location,$timeout,$filter,$rootScope) 
+bidApp.controller('homeController', function($scope,$http,$location) 
 {
     console.log("in homeController");
+    $scope.userdata = JSON.parse(localStorage.userdata);
 
-
-    $scope.reg = {}
-
-    $scope.submitReg = function()
+    $scope.login = function()
     {
-      // console.log('inside submit')
-      $scope.reg.cat = JSON.parse($scope.reg.cat)
+      var param  = JSON.stringify(
+        {
+          "username":$scope.username,
+          "password":$scope.password,
+        }
+      );
+      // console.log(param);
+
+      $http.post("http://localhost:6969/login",param)
+        .success(function (data) {
+            console.log(data);
+            if (data.success == "true") {
+              console.log('success');
+                iziToast.success({theme: 'dark',title:'Success',message: data.message,position: 'topRight',icon: 'fa fa-user',progressBarColor: 'rgb(0, 255, 184)'});
+                // location.reload();
+                // console.log(data.userdata);
+                localStorage.userdata = JSON.stringify(data.userdata);
+                $scope.userdata = JSON.parse(localStorage.userdata);
+                console.log($scope.userdata);
+                $location.path('home');
+              } else {
+                iziToast.error({title: 'Error',message: data.message, position: 'topRight'});
+            }
+        })
+        .error(function (err) {
+            iziToast.error({title: 'Error',message: "Server Error !", position: 'topRight'});
+        });
+
+    }
+
+
+    $scope.reg = {
+      'isStaff': false,
+    }
+
+    $scope.register = function()
+    {
+
+      if($scope.reg.password !== $scope.repassword)
+      {
+        iziToast.error({title: 'Error',message: "Password Did Not Matched!", position: 'topRight'});
+        return;
+      }
+
+      console.log('inside submit')
       var param = JSON.stringify(
         $scope.reg
       );
 
       console.log(param);
 
-        $http.post("http://localhost:5555/addServiceProvider",param)
+        $http.post("http://localhost:6969/register",param)
         .success(function (data) {
             // console.log(data);
             if (data.success == "true") {
               console.log('success');
                 iziToast.success({theme: 'dark',title:'Success',message: data.message,position: 'topRight',icon: 'fa fa-user',progressBarColor: 'rgb(0, 255, 184)'});
                 // location.reload();
-                $location.path('listUsers');
+                $location.path('/');
               } else {
                 iziToast.error({title: 'Error',message: data.message, position: 'topRight'});
             }
@@ -303,216 +340,38 @@ bidApp.controller('homeController', function($scope,$http,$route,$templateCache,
         });
     };
 
-    $scope.getSPDetail = function(id)
+    $scope.update = function()
     {
-      $scope.spDetail = [];
-      $scope.spDetail = $scope.spList.find(x => x._id === id);
-    }
 
-    $scope.getSPList = function() {
-      $http.post("http://localhost:5555/getSPList")
-      .success(function (data) {
-          console.log(data);
-          if (data.success == "true") {
-            console.log('success');
-            $scope.spList = data.spList;
-              // iziToast.success({theme: 'dark',title:'Success',message: data.message,position: 'topRight',icon: 'fa fa-user',progressBarColor: 'rgb(0, 255, 184)'});
-          } else {
-              iziToast.error({title: 'Error',message: data.message, position: 'topRight'});
-          }
-      })
-      .error(function (err) {
-          iziToast.error({title: 'Error',message: "Server Error !", position: 'topRight'});
-      });
-  }
-
-    $scope.getCatList = function() {
-        $http.post("http://localhost:5555/catlist")
-        .success(function (data) {
-            console.log(data);
-            if (data.success == "true") {
-              console.log('success');
-              $scope.catList = data.catlist;
-                // iziToast.success({theme: 'dark',title:'Success',message: data.message,position: 'topRight',icon: 'fa fa-user',progressBarColor: 'rgb(0, 255, 184)'});
-            } else {
-                iziToast.error({title: 'Error',message: data.message, position: 'topRight'});
-            }
-        })
-        .error(function (err) {
-            iziToast.error({title: 'Error',message: "Server Error !", position: 'topRight'});
-        });
-    }
-
-    $scope.getCount = function() {
-      $http.post("http://localhost:5555/getCount")
-      .success(function (data) {
-          console.log(data);
-          if (data.success == "true") {
-            console.log('success');
-            $scope.count = data.count;
-              // iziToast.success({theme: 'dark',title:'Success',message: data.message,position: 'topRight',icon: 'fa fa-user',progressBarColor: 'rgb(0, 255, 184)'});
-          } else {
-              iziToast.error({title: 'Error',message: data.message, position: 'topRight'});
-          }
-      })
-      .error(function (err) {
-          iziToast.error({title: 'Error',message: "Server Error !", position: 'topRight'});
-      });
-  }
-
-    $scope.getSubCatList = function() {
-      $http.post("http://localhost:5555/subcatlist")
-      .success(function (data) {
-          console.log(data);
-          if (data.success == "true") {
-            console.log('success');
-            $scope.subcatlist = data.subcatlist;
-              // iziToast.success({theme: 'dark',title:'Success',message: data.message,position: 'topRight',icon: 'fa fa-user',progressBarColor: 'rgb(0, 255, 184)'});
-          } else {
-              iziToast.error({title: 'Error',message: data.message, position: 'topRight'});
-          }
-      })
-      .error(function (err) {
-          iziToast.error({title: 'Error',message: "Server Error !", position: 'topRight'});
-      });
-  }
-
-    $scope.getUserList = function()
-    {
-      $http.post("http://localhost:5555/getuserlist")
-        .success(function (data) {
-            console.log(data);
-            if (data.success == "true") {
-              console.log('success');
-              $scope.userList = data.userlist;
-                // iziToast.success({theme: 'dark',title:'Success',message: data.message,position: 'topRight',icon: 'fa fa-user',progressBarColor: 'rgb(0, 255, 184)'});
-            } else {
-                iziToast.error({title: 'Error',message: data.message, position: 'topRight'});
-            }
-        })
-        .error(function (err) {
-            iziToast.error({title: 'Error',message: "Server Error !", position: 'topRight'});
-        });
-    }
-
-    $scope.subcategory = [];
-    $scope.addNewSubcategory = function()
-    {
-      // console.log($scope.subcategory);
-
-      $scope.subcategory.catData = JSON.parse($scope.subcategory.catData);
-      
-      var param = JSON.stringify(
-        {
-          "catId":$scope.subcategory.catData.ID,
-          "catName":$scope.subcategory.catData.catName,
-          "subCatName":$scope.subcategory.subcatName
-        }
-      )
-
-      $http.post('http://localhost:5555/addsubcat',param)
-        .success(function (data) {
-          if(data.success == 'true')
-          {
-            iziToast.success({theme: 'dark',title:'Success',message: data.message,position: 'topRight',icon: 'fa fa-user',progressBarColor: 'rgb(0, 255, 184)'});
-            location.reload();
-          }
-          else{
-            iziToast.error({title: 'Error',message: data.message, position: 'topRight'});
-            location.reload();  
-          }
-        })
-        .error(function (err) {
-            iziToast.error({title: 'Error',message: "Server Error !", position: 'topRight'});
-        });
-    }
-
-
-
-
-
-
-    //Update Functions
-    $scope.updateSP = function()
-    {
-      var param = JSON.stringify(
-        $scope.spDetail
-      )
-
-      $http.post('http://localhost:5555/updateSP',param)
-        .success(function (data) {
-          if(data.success == 'true')
-          {
-            iziToast.success({theme: 'dark',title:'Success',message: data.message,position: 'topRight',icon: 'fa fa-user',progressBarColor: 'rgb(0, 255, 184)'});
-            location.reload();
-          }
-          else{
-            iziToast.error({title: 'Error',message: data.message, position: 'topRight'});
-            location.reload();  
-          }
-        })
-        .error(function (err) {
-            iziToast.error({title: 'Error',message: "Server Error !", position: 'topRight'});
-        });
-    }
-
-    $scope.getCatDetail = function(id)
-    {
-      $scope.subCatDetail = [];
-      $scope.subCatDetail = $scope.subcatlist.find(x => x.subCatName === id);
-    }
-
-    $scope.editsubcategory = function()
-    {
-      var param = JSON.stringify(
-        $scope.subCatDetail
-      )
-
-      $http.post('http://localhost:5555/updateSubCat',param)
-        .success(function (data) {
-          if(data.success == 'true')
-          {
-            iziToast.success({theme: 'dark',title:'Success',message: data.message,position: 'topRight',icon: 'fa fa-user',progressBarColor: 'rgb(0, 255, 184)'});
-            location.reload();
-          }
-          else{
-            iziToast.error({title: 'Error',message: data.message, position: 'topRight'});
-            location.reload();  
-          }
-        })
-        .error(function (err) {
-            iziToast.error({title: 'Error',message: "Server Error !", position: 'topRight'});
-        });
-    }
-
-
-    //Delete Functions
-    $scope.deleteSP = function(id)
-    {
-      if(confirm('Do you really want to delete this Service Provider?'))
+      if($scope.userdata.password !== $scope.repassword)
       {
-        var param = JSON.stringify(
-          {'_id': id}
-        )
-  
-        $http.post('http://localhost:5555/deleteSP',param)
-          .success(function (data) {
-            if(data.success == 'true')
-            {
-              iziToast.success({theme: 'dark',title:'Success',message: data.message,position: 'topRight',icon: 'fa fa-user',progressBarColor: 'rgb(0, 255, 184)'});
-              location.reload();
-            }
-            else{
-              iziToast.error({title: 'Error',message: data.message, position: 'topRight'});
-              location.reload();  
-            }
-          })
-          .error(function (err) {
-              iziToast.error({title: 'Error',message: "Server Error !", position: 'topRight'});
-          });
+        iziToast.error({title: 'Error',message: "Password Did Not Matched!", position: 'topRight'});
+        return;
       }
-    }
 
+      console.log('inside submit')
+      var param = JSON.stringify(
+        $scope.userdata
+      );
+
+      console.log(param);
+
+        $http.post("http://localhost:6969/update",param)
+        .success(function (data) {
+            // console.log(data);
+            if (data.success == "true") {
+              console.log('success');
+                iziToast.success({theme: 'dark',title:'Success',message: data.message,position: 'topRight',icon: 'fa fa-user',progressBarColor: 'rgb(0, 255, 184)'});
+                location.reload();
+                // $location.path('login');
+              } else {
+                iziToast.error({title: 'Error',message: data.message, position: 'topRight'});
+            }
+        })
+        .error(function (err) {
+            iziToast.error({title: 'Error',message: "Server Error !", position: 'topRight'});
+        });
+    };
 });
 
 

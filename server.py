@@ -10,19 +10,35 @@ from pandas import ExcelWriter
 
 app = Flask("__name__")
 CORS(app)
-app.config["MONGO_URI"] = "mongodb://localhost:27017/bid"
+app.config["MONGO_URI"] = "mongodb://localhost:27017/chatbot"
 mongo = PyMongo(app)
 
 
 @app.route("/login", methods=['POST'])
 def login():
     formdata = request.get_json()
+
     auth = mongo.db.users.find_one({'username': formdata['username'], 'password': formdata['password']})
-        
+    # print(auth)
     if auth:
-        return jsonify({"success": "true", "message": "Login Successfull!"})
+        auth['_id'] = str(auth['_id'])
+        return jsonify({"success": "true", "message": "Login Successfull!", "userdata":auth})
     else:
-        return jsonify({"success": "false", "message": "Username/Password Incorrect!"})
+        return jsonify({"success": "false", "message": "User Not Found.!"})
+
+@app.route('/register', methods=['POST'])
+def register():
+    formdata = request.get_json()
+    mongo.db.users.insert(formdata)
+    return jsonify({'success':'true','message':'User Created Successfully!'})
+
+@app.route('/update', methods=['POST'])
+def update():
+    formdata = request.get_json()
+    userid = ObjectId(formdata['_id'])
+    formdata.pop('_id', None)
+    mongo.db.users.update_one({'_id':userid},{"$set":formdata},upsert=False)
+    return jsonify({'success':'true','message':'User Data Updated Successfully!'})
 
 @app.route('/catlist', methods=['POST'])
 def catlist():
@@ -92,4 +108,4 @@ def deleteSP():
     return jsonify({'success':'true','message':'Service Provider Deleted Successfully!'})
 
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0', port=5555, threaded=True)
+    app.run(debug=True, host='0.0.0.0', port=6969, threaded=True)

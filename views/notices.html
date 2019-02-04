@@ -37,13 +37,13 @@
                           Logged In as :
                         </div>
                         <div class="card-body text-justify">
-                          <h4 class="card-title"><i class="fa fa-user"></i> Jon Doe</h4>
-                          <p class="card-text">Cool</p>
-                          <a href="#">Edit Profile</a>
+                          <h4 class="card-title"><i class="fa fa-user"></i> {{userdata['fname']}} {{userdata['lname']}}</h4>
+                          <p class="card-text">Role : <strong ng-if="userdata.isStaff">Staff</strong> <strong ng-if="!userdata.isStaff">Student</strong> </p>
+                          <!-- <a href="#profile">Edit Profile</a> -->
                         </div>
-                        <br>
+                        <!-- <br> -->
                         <div class="p-2">
-                            <button class="btn btn-danger btn-sm btn-block">Logout</button>
+                            <a class="btn btn-danger btn-sm btn-block" href="#profile">Edit Profile</a>
                         </div>
                       </div>    
         </div>
