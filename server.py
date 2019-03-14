@@ -8,11 +8,26 @@ import pandas as pd
 import json
 from pandas import ExcelWriter
 
+from chatterbot import ChatBot
+from chatterbot.trainers import ListTrainer
+
 app = Flask("__name__")
 CORS(app)
 app.config["MONGO_URI"] = "mongodb://localhost:27017/chatbot"
 mongo = PyMongo(app)
 
+bot = ChatBot('Test')
+trainer = ListTrainer(bot)
+
+
+@app.route("/chatbot", methods=['POST'])
+def chatbot():
+    question = request.get_json()
+    print(question)
+    response = bot.get_response(question)
+    print(response)
+    if len(str(response)) > 1:
+        return jsonify({"success": "true", "response": str(response)})
 
 @app.route("/login", methods=['POST'])
 def login():

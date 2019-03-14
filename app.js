@@ -262,6 +262,10 @@ bidApp.config(function($routeProvider) {
     .when('/profile', {
       templateUrl : 'views/profile.html',
       controller : 'homeController'
+    })
+    .when('/bot', {
+      templateUrl : 'views/chatbot.html',
+      controller : 'homeController'
     });
 });
 
@@ -269,6 +273,38 @@ bidApp.controller('homeController', function($scope,$http,$location)
 {
     console.log("in homeController");
     $scope.userdata = JSON.parse(localStorage.userdata);
+
+    
+    $scope.answers = [];
+    $scope.questions = [];
+    $scope.chatbot = function()
+    {
+      $scope.flag = true;
+      $scope.questions.push(this.question);
+
+      var param  = JSON.stringify(
+        this.question
+      );
+      // console.log(param);
+
+      $http.post("http://localhost:6969/chatbot",param)
+        .success(function (data) {
+            console.log(data);
+            if (data.success == "true") {
+              $scope.answers.push(data.response);
+              $scope.flag = false;
+              $scope.question = "";
+              } else {
+                iziToast.error({title: 'Error',message: "Something Went Wrong!", position: 'topRight'});
+            }
+        })
+        .error(function (err) {
+            iziToast.error({title: 'Error',message: "Server Error !", position: 'topRight'});
+        });
+
+    }
+
+
 
     $scope.login = function()
     {
