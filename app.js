@@ -1,14 +1,14 @@
-var bidApp = angular.module('bidApp', ['ngRoute']);
+var chatBotApp = angular.module('chatBotApp', ['ngRoute']);
 
-    bidApp.config(function($sceProvider) {
+    chatBotApp.config(function($sceProvider) {
         $sceProvider.enabled(false);
     });
 
-bidApp.config(function($sceProvider) {
+chatBotApp.config(function($sceProvider) {
     $sceProvider.enabled(false);
 });
 
-bidApp.config(function($routeProvider) {
+chatBotApp.config(function($routeProvider) {
     $routeProvider
     .when('/', {
         templateUrl : 'login.html',
@@ -36,7 +36,7 @@ bidApp.config(function($routeProvider) {
     });
 });
 
-bidApp.controller('homeController', function($scope,$http,$location) 
+chatBotApp.controller('homeController', function($scope,$http,$location) 
 {
     console.log("in homeController");
     $scope.userdata = JSON.parse(localStorage.userdata);
