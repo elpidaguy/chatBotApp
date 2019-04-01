@@ -24,8 +24,53 @@
     <link rel="stylesheet" type="text/css" href="assets/css/animate.css"> 
     <link rel="stylesheet" href="assets/font-awesome-4.7.0/css/font-awesome.min.css">
     <!-- <link href="assets/css/now-ui-dashboard.css?v=1.1.0" rel="stylesheet"/> -->
+
+    <!--particle js-->
+<script src="https://npmcdn.com/particlesjs@1.0.2/dist/particles.min.js"></script>
+
+<script>
+window.onload = function() {
+  Particles.init({ options });
+};
+
+// e.g.
+window.onload = function() {
+  Particles.init({
+    selector: '#myCanvas',
+    color: '#ffffff',
+    connectParticles: 'true',
+    sizeVariations: '5'
+  });
+};
+</script>
+
+<style>
+html,
+body {
+    background-image: url("assets/chatbot.jpeg");
+    background-size: cover;
+    color: grey;
+    font-family: "Muli",sans-serif;
+    font-size: 13px;
+    margin: 0;
+    padding: 0;
+}
+
+#myCanvas {
+  position: absolute;
+  display: block;
+  top: 0;
+  left: 0;
+  z-index: 0;
+}
+
+</style>
+
 </head>
 <body>
+
+    <canvas id="myCanvas"></canvas>
+<br>
 
 <div class="mx-auto mt-5 text-center" style="width: 18%;">
         <div class="card">

@@ -28,32 +28,48 @@
 	</div>
 </nav>
 
-<div style="margin-top:65px" class="container text-center">
-	<div style="min-height: 500px !important;" class="card bg-white">
-		<div>
+<div style="height: 100% !important;background-image: url('assets/chatbot.jpeg'); background-size: inherit;">
+	
+<div style="width: 50% !important;margin-top:65px;" class="container text-center">
+	<div style="height: 500px;max-height: 500px;min-height: 500px !important; overflow-y: auto;" class="card bg-white">
+		<div class="p-2 bg-danger text-white">
 			<h3>Chat Bot</h3>
 		</div>
-		<hr>
-		<div ng-repeat="x in questions track by $index">
-			<br>
-			<div class="row text-left">
-				<div class="col-md-6"></div>
-				<div class="col-md-6"><span class="bg-danger">You: {{x}}</span></div>
+		<hr style="padding: 0; margin: 0">
+		<!-- <div class="row">
+			<div class="col-md-6">
+				<ul ng-repeat="x in questions track by $index">
+					<li style="float: left;text-align: left; padding: 8px; background-color: #f4c8f1 !important"><b> Bot: </b> {{answers[$index]}}</li>
+					<br>
+				</ul>	
 			</div>
-			<div class="row text-right">
-				<div class="col-md-6"><span class="bg-primary">Bot: {{answers[$index]}}</span></div>	
-				<div class="col-md-6"></div>
-			</div>
+			<div class="col-md-6">
+			<ul ng-repeat="x in questions track by $index">
+			<li style="float: right; text-align: left ;padding: 8px; background-color: #a7e1ef !important">{{x}} <b> : You </b> </li>
 			<br>
+		</ul>	
+			</div>
+		</div> -->
+
+<div >
+	<table style="width: 100%" class="table table-sm table-bordered table-striped">
+		<tbody>
+			<tr ng-repeat="x in questions track by $index">
+				<td style="width: 50%;text-align: left;background-color: #f4c8f1 !important"><b> <i class="fa fa-user-secret"></i> Bot: </b> {{answers[$index]}}</td>
+				<td style="width: 50%;text-align: left; background-color: #a7e1ef !important"> <b> <i class="fa fa-user"></i> You: </b> {{x}}</td>
+			</tr>
+		</tbody>
+	</table>
 		</div>
+
 		<div ng-if="flag"><span class="text-left">typing...</span></div>
 	</div>
 	<hr>
-	<div>
-		<input type="text" name="question" class="form-control" ng-model="question" placeholder="Enter Question Here...">
+	<div class="row">
+		<div class="col-md-9"><input type="text" name="question" class="form-control" ng-model="question" placeholder="Enter Question Here..." ng-keyup="$event.keyCode == 13 ? chatbot() : null"></div>
+		<div class="col-md-3"><button class="btn btn-block btn-primary" ng-click="chatbot()">Send</button></div>
 	</div>
 	<br>
-	<div>
-		<button class="btn btn-block btn-primary" ng-click="chatbot()">Send</button>
-	</div>
+	<br>
+</div>
 </div>

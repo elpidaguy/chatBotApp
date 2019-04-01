@@ -28,7 +28,7 @@
 	</div>
 </nav>
 
-<div style="margin-top:65px; font-size: 14px !important" class="container text-center">
+<div style="margin-top:65px; font-size: 14px !important" class="container text-center" ng-init="getNotices()">
 
 	<div class="row">
         <div class="col-md-3">
@@ -52,13 +52,13 @@
             <div class="card-header">
               <div class="row">
                 <div class="col-md-7 text-justify">
-                    Create new post...
+                    <i class="fa fa-clipboard"></i> Create new post...
                 </div>
-                <div class="col-md-3" align="right">
-                    is notice? <input type="checkbox">
+                <div ng-if="userdata.isStaff" class="col-md-3" align="right">
+                    is notice? <input type="checkbox" ng-model="notice.isNotice">
                 </div>
                 <div class="col-md-2">
-                    <button class="btn btn-block btn-sm btn-primary text-white">Post</button>
+                    <button class="btn btn-block btn-sm btn-primary text-white" ng-click="addNotice()">Post</button>
                 </div>
               </div>
             </div>
@@ -75,39 +75,58 @@
             </div>
 
           <hr>
-
-          <div class="card">
+<div ng-repeat="x in notices | filter: { isNotice : selectFilter}">
+          <div ng-if="x.isNotice" class="card">
                 <div class="card-header bg-secondary text-white">
                   <div class="row">
-                    <div class="col-md-3"><b>Notice</b></div>
+                    <div class="col-md-3"><b><i class="fa fa-sticky-note"></i> Notice</b></div>
                     <div class="col-md-6"></div>
-                    <div class="col-md-3" style="font-size: 12px;font-weight: bold">12-01-2018</div>
+                    <div class="col-md-3" style="font-size: 12px;font-weight: bold">{{x.noticeDate | date : format : shortDate}}</div>
                   </div>
                 </div>
                 <div class="card-body text-justify">
-                  <h4 class="card-title">Notice about something</h4>
-                  <p class="card-text">I love this notice</p>
+                  <h4 class="card-title">{{x.title}}</h4>
+                  <p class="card-text">{{x.description}}</p>
                 </div>
                 <div class="p-2 text-muted text-right ">
-                  by Jon
+                  by {{x.noitceBy}}
                 </div>
+              </div>
+
+              <div ng-if="!x.isNotice" class="card">
+                <div class="card-header bg-danger text-white">
+                  <div class="row">
+                    <div class="col-md-3"><b><i class="fa fa-comment"></i> Post</b></div>
+                    <div class="col-md-6"></div>
+                    <div class="col-md-3" style="font-size: 12px;font-weight: bold">{{x.noticeDate | date : format : shortDate}}</div>
+                  </div>
+                </div>
+                <div class="card-body text-justify">
+                  <h4 class="card-title">{{x.title}}</h4>
+                  <p class="card-text">{{x.description}}</p>
+                </div>
+                <div class="p-2 text-muted text-right ">
+                  {{x.noitceBy}}
+                </div>
+              </div>
+              <br>
               </div>
 </div>
 <div class="col-md-3">
     <div class="card">
             <div class="card-header">
-              <h3>Filters</h3>
+              <h3> <i class="fa fa-filter"></i> Filters</h3>
             </div>
             <div class="card-body">
                 <label for="select">By Type</label>
-                <select class="form-control" id="select">
+                <select class="form-control" id="select" ng-model="selectFilter">
                     <option>--Select Post Type--</option>
-                    <option>Post</option>
-                    <option>Notice</option>
+                    <option value="!true">Post</option>
+                    <option value="true">Notice</option>
                 </select>
             </div>
             <div class="card-footer text-muted text-right">
-              <button class="btn btn-danger btn-block btn-sm">Clear</button>
+              <a class="btn btn-danger btn-block btn-sm" href="#notices" target="_self">Clear</a>
             </div>
           </div>
 </div>
