@@ -92,6 +92,12 @@
                 <div class="card-body text-justify">
                   <h4 class="card-title">{{x.title}}</h4>
                   <p class="card-text">{{x.description}}</p>
+                  <div ng-if="x.noitceFileType == 'image/jpeg' || x.noitceFileType == 'image/png'" class="text-center">
+                    <img src="{{x.noitceUrl}}" alt="image" style="padding: 3px;max-height: 300px; max-width: 100%;">
+                  </div>
+                  <div ng-if="x.noitceFileType != 'image/jpeg'">
+                    <a class="btn btn-primary" ng-href="{{x.noitceUrl}}" target="_blank">Click to see attachment</a>
+                  </div>
                 </div>
                 <div class="p-2 text-muted text-right ">
                   by {{x.noitceBy}}
@@ -109,7 +115,7 @@
                 <div class="card-body text-justify">
                   <h4 class="card-title">{{x.title}}</h4>
                   <p class="card-text">{{x.description}}</p>
-                  <div ng-if="x.noitceFileType == 'image/jpeg'" class="text-center">
+                  <div ng-if="x.noitceFileType == 'image/jpeg' || x.noitceFileType == 'image/png'" class="text-center">
                     <img src="{{x.noitceUrl}}" alt="image" style="padding: 3px;max-height: 300px; max-width: 100%;">
                   </div>
                   <div ng-if="x.noitceFileType != 'image/jpeg'">
