@@ -69,5 +69,20 @@ def update():
     mongo.db.users.update_one({'_id':userid},{"$set":formdata},upsert=False)
     return jsonify({'success':'true','message':'User Data Updated Successfully!'})
 
+@app.route('/uploadfile', methods=['POST'])
+def uploadfile():
+    filename = ""
+    target = "C:/xampp/htdocs/chatBotApp/uploads"
+
+    for upload in request.files.getlist("file"):
+        filename = upload.filename
+        destination = "/".join([target, filename])
+
+        upload.save(destination)
+
+    return jsonify({"success": "true", "message": "Successfully Uploaded"})
+
+
+
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=6969, threaded=True)

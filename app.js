@@ -1,5 +1,26 @@
 var chatBotApp = angular.module('chatBotApp', ['ngRoute']);
 
+chatBotApp.directive('fileModel', ['$parse', function($parse) {
+ return {
+  restrict: 'A',
+  link: function(scope, element, attrs) {
+   var model = $parse(attrs.fileModel);
+   var modelSetter = model.assign;
+
+   element.bind('change', function() {
+    scope.$apply(function() {
+      console.log(attrs.fileModel);
+
+     modelSetter(scope, element[0].files[0]);
+     /*if (attrs.fileModel == "amcExcelFile") {
+      scope.uploadAmcExcel();    
+     }*/
+    });
+   });
+  }
+ };
+}]);
+
     chatBotApp.config(function($sceProvider) {
         $sceProvider.enabled(false);
     });
@@ -184,8 +205,15 @@ $scope.notice = {};
         return;
       }
 
+      $scope.uploadfile();
+
       $scope.userdata = JSON.parse(localStorage.userdata);
       console.log($scope.notice);
+      console.log($scope.noticefile);
+      if($scope.noticefile)
+      $scope.notice['noitceUrl'] = "http://localhost/chatBotApp/uploads/"+$scope.noticefile['name'];
+      $scope.notice['noitceFileType'] = $scope.noticefile['type'];
+
       $scope.notice['noitceBy'] = $scope.userdata['fname'] + $scope.userdata['lname'];
       $scope.notice['noticeDate'] = new Date();
       var param = JSON.stringify(
@@ -230,6 +258,51 @@ $scope.notices = [];
             iziToast.error({title: 'Error',message: "Server Error !", position: 'topRight'});
         });
     }
+
+
+$scope.uploadfile = function()
+    {
+        console.log('in uploadsoExcel');
+        var uploadUrl = "http://localhost:6969/uploadfile";
+        var file = $scope.noticefile;
+        if (file != undefined) {
+          var fd = new FormData();
+          fd.append('file', file);
+  
+          $http.post(uploadUrl, fd, {
+            transformRequest: angular.identity,
+            headers: {
+              'Content-Type': undefined
+            }
+          })
+          .success(function(data) {
+  
+            if (data.success == "true") {
+              iziToast.show({theme: 'dark',title:'Success',message: data.message,position: 'topRight',icon: 'fa fa-user',progressBarColor: 'rgb(0, 255, 184)'});
+              file = undefined;
+              $scope.noticefile = undefined;
+              // location.reload();
+              //$('#uploadAmcExcel').modal('hide');
+  
+            }
+            else 
+            {
+              // waitingDialog.hide();
+              // location.reload();
+              //$('#uploadAmcExcel').modal('hide');
+              iziToast.error({title: 'Error',message: data.message, position: 'topRight'});
+              file = undefined;
+              $scope.noticefile = undefined;
+            }
+          })
+          .error(function() {
+            // waitingDialog.hide();
+            iziToast.error({title: 'Error',message: "Server Error !", position: 'topRight'});
+            file = undefined;
+          });
+        }
+    }
+
 });
 
 
