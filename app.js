@@ -60,7 +60,7 @@ chatBotApp.config(function($routeProvider) {
 chatBotApp.controller('homeController', function($scope,$http,$location) 
 {
     console.log("in homeController");
-    $scope.userdata = JSON.parse(localStorage.userdata);
+    // $scope.userdata = JSON.parse(localStorage.userdata);
     
     $scope.answers = [];
     $scope.questions = [];
